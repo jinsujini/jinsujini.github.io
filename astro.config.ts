@@ -54,7 +54,8 @@ export default defineConfig({
     },
   },
   vite: {
-    plugins: [tailwindcss()],
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    plugins: [tailwindcss() as any],
   },
   fonts: [
     {
