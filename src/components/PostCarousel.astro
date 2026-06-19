@@ -1,0 +1,121 @@
+---
+import type { CollectionEntry } from "astro:content";
+import { getPostUrl } from "@/utils/getPostPaths";
+
+type Props = {
+  posts: CollectionEntry<"posts">[];
+};
+
+const { posts } = Astro.props;
+const items = posts.slice(0, 5);
+---
+
+<div class="relative my-6 h-52 select-none" id="post-carousel">
+  {
+    items.map((post, i) => {
+      const imgSrc =
+        typeof post.data.ogImage === "string"
+          ? post.data.ogImage
+          : post.data.ogImage?.src;
+      const url = getPostUrl(post.id, post.filePath, Astro.currentLocale);
+      return (
+        <a
+          href={url}
+          class="carousel-card absolute inset-0 rounded-2xl overflow-hidden border border-border transition-all duration-500"
+          data-index={i}
+          tabindex={i === 0 ? 0 : -1}
+        >
+          {imgSrc ? (
+            <img
+              src={imgSrc}
+              alt={post.data.title}
+              class="w-full h-full object-cover"
+            />
+          ) : (
+            <div class="w-full h-full bg-gradient-to-br from-accent/20 to-muted" />
+          )}
+          <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent flex flex-col justify-end p-5">
+            {post.data.tags?.[0] && (
+              <span class="text-accent text-xs font-semibold mb-1 uppercase tracking-wide">
+                {post.data.tags[0]}
+              </span>
+            )}
+            <p class="text-white font-bold text-lg leading-snug">
+              {post.data.title}
+            </p>
+          </div>
+        </a>
+      );
+    })
+  }
+</div>
+
+<div class="flex justify-center gap-2 mt-3" id="carousel-dots">
+  {
+    items.map((_, i) => (
+      <button
+        class="carousel-dot h-2 rounded-full transition-all duration-300 bg-muted"
+        data-index={i}
+        aria-label={`슬라이드 ${i + 1}`}
+      />
+    ))
+  }
+</div>
+
+<script>
+  function initCarousel() {
+    const cards = document.querySelectorAll<HTMLElement>(".carousel-card");
+    const dots = document.querySelectorAll<HTMLElement>(".carousel-dot");
+    const total = cards.length;
+    if (total === 0) return;
+
+    let current = 0;
+
+    function update() {
+      cards.forEach((card, i) => {
+        const offset = (i - current + total) % total;
+        const pos = offset > Math.floor(total / 2) ? offset - total : offset;
+
+        card.style.transform = `translateX(${pos * 55}%) scale(${pos === 0 ? 1 : 0.88})`;
+        card.style.opacity = pos === 0 ? "1" : Math.abs(pos) === 1 ? "0.55" : "0";
+        card.style.zIndex = pos === 0 ? "10" : Math.abs(pos) === 1 ? "5" : "0";
+        card.style.pointerEvents = pos === 0 ? "auto" : "none";
+        card.tabIndex = pos === 0 ? 0 : -1;
+      });
+
+      dots.forEach((dot, i) => {
+        if (i === current) {
+          dot.style.background = "var(--color-accent)";
+          dot.style.width = "1rem";
+        } else {
+          dot.style.background = "";
+          dot.style.width = "0.5rem";
+        }
+      });
+    }
+
+    dots.forEach((dot, i) => {
+      dot.addEventListener("click", () => {
+        current = i;
+        update();
+        resetTimer();
+      });
+    });
+
+    let timer: ReturnType<typeof setInterval>;
+
+    function resetTimer() {
+      clearInterval(timer);
+      timer = setInterval(() => {
+        current = (current + 1) % total;
+        update();
+      }, 3000);
+    }
+
+    update();
+    resetTimer();
+  }
+
+  document.addEventListener("astro:page-load", initCarousel);
+  initCarousel();
+</script>

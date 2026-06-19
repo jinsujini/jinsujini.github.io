@@ -107,7 +107,6 @@ const rssHref = getRelativeLocaleUrl(
         ).matches;
         const theme = stored ?? (prefersDark ? "dark" : "light");
         document.firstElementChild?.setAttribute("data-theme", theme);
-        // Expose value so theme.ts can skip re-detection.
         window.__theme = { value: theme };
       })();
     </script>

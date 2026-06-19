@@ -7,6 +7,7 @@ featured: false
 draft: false
 tags:
   - 프로젝트
+ogImage: /persona_main.png
 description: "타입스크립트와 Tailwind Css로 구현한 개인 프로젝트 입니다."
 ---
 

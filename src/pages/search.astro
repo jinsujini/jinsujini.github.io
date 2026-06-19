@@ -12,7 +12,6 @@ import config from "@/config";
 
 const locale = Astro.currentLocale ?? config.site.lang;
 
-// Redirect to 404 page if `search` feature is not enabled
 const notFoundUrl = getRelativeLocaleUrl(locale, "404");
 if (config.features.search !== "pagefind" && notFoundUrl) {
   return Astro.rewrite(notFoundUrl);
@@ -60,10 +59,9 @@ const t = useTranslations(locale);
     const onIdle = window.requestIdleCallback || (cb => setTimeout(cb, 1));
 
     onIdle(async () => {
-      // @ts-expect-error — Missing types for @pagefind/default-ui package.
+      // @ts-expect-error
       const { PagefindUI } = await import("@pagefind/default-ui");
 
-      // Display warning inn dev mode
       if (import.meta.env.DEV) {
         pageFindSearch.innerHTML = `
             <div class="bg-muted/75 rounded p-4 space-y-4 mb-4">
@@ -73,7 +71,6 @@ const t = useTranslations(locale);
           `;
       }
 
-      // Init pagefind ui
       const search = new PagefindUI({
         element: "#pagefind-search",
         bundlePath,
@@ -91,13 +88,11 @@ const t = useTranslations(locale);
         },
       });
 
-      // If search param exists (eg: search?q=astro), trigger search
       const query = params.get("q");
       if (query) {
         search.triggerSearch(query);
       }
 
-      // Reset search param if search input is cleared
       const searchInput = document.querySelector(".pagefind-ui__search-input");
       const clearButton = document.querySelector(".pagefind-ui__search-clear");
       searchInput?.addEventListener("input", resetSearchParam);
@@ -114,7 +109,6 @@ const t = useTranslations(locale);
   document.addEventListener("astro:after-swap", () => {
     const pagefindSearch = document.querySelector("#pagefind-search");
 
-    // if pagefind search form already exists, don't initialize search component
     if (pagefindSearch && pagefindSearch.querySelector("form")) return;
 
     initSearch();

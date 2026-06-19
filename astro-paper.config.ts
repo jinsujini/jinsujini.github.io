@@ -29,8 +29,9 @@ export default defineAstroPaperConfig({
     search: "pagefind",
   },
   socials: [
-    { name: "github", url: "https://github.com/jinsujini" },
-    { name: "mail",   url: "mailto:20231168@sungshin.ac.kr" },
+    { name: "github",    url: "https://github.com/jinsujini" },
+    { name: "instagram", url: "https://instagram.com/weomeowl" },
+    { name: "mail",      url: "mailto:20231168@sungshin.ac.kr" },
   ],
   shareLinks: [
     { name: "x",        url: "https://x.com/intent/post?url=" },
